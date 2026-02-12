@@ -9,11 +9,14 @@ public class Test1 {
     public static void main(String[] args) {
         Scanner input = null;
         try {
-            input = new Scanner(new File("test1.txt"));
+            input = new Scanner(new File("tests/test1.txt"));
         } catch (FileNotFoundException e) {
+            System.out.println(e.getLocalizedMessage());
             System.out.println("You must copy test1.txt to this directory" +
                                " before running the testing program.");
             System.exit(1);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         int cases = input.nextInt();
         input.nextLine();  // to throw away end-of-line
