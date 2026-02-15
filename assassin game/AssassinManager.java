@@ -3,8 +3,10 @@ import java.util.List;
 class AssassinManager implements GameManager {
     AssassinNode head;
     AssassinNode graveYardHead;
+    int size = 0;
     AssassinManager(List<String> gameList) {
         AssassinNode temp = null;
+        size = gameList.size();
         for(int i = 0; i < gameList.size(); i++) {
             String name = gameList.get(i);
             if (i == 0) {
@@ -20,8 +22,15 @@ class AssassinManager implements GameManager {
     @Override
     public void printKillRing() {
         AssassinNode temp = head;
+        String next;
         while(temp != null) {
-            System.out.println(temp.name);
+            if (temp.next == null) {
+                next = head.name;
+            }
+            else {
+                next = temp.next.name;
+            }
+            System.out.println(temp.name +" is tagging "+next);
             temp = temp.next;
         }
     }
@@ -39,11 +48,10 @@ class AssassinManager implements GameManager {
         }
     }
 
-    @Override
-    public boolean killRingContains(String name) {
-        AssassinNode temp = head;
+    private boolean findFromHead(AssassinNode startingNode, String nameToFind) {
+        AssassinNode temp = startingNode;
         while(temp != null) {
-            if(name.equals(temp.name)) {
+            if(temp.name.equals(nameToFind)) {
                 return true;
             }
             temp = temp.next;
@@ -52,18 +60,24 @@ class AssassinManager implements GameManager {
     }
 
     @Override
+    public boolean killRingContains(String name) {
+        return findFromHead(head, name);
+    }
+
+    @Override
     public boolean graveyardContains(String name) {
-        return false;
+        return findFromHead(graveYardHead, name);
     }
 
     @Override
     public boolean gameOver() {
-        return false;
+        return size == 1;
     }
 
     @Override
     public String winner() {
-        return "";
+        if(size == 1) return head.name;
+        return null;
     }
 
     @Override
@@ -75,6 +89,7 @@ class AssassinManager implements GameManager {
             head = curr.next;
             temp.next = graveYardHead;
             graveYardHead = temp;
+            size--;
             return;
         }
 
@@ -84,6 +99,7 @@ class AssassinManager implements GameManager {
                 curr.next = curr.next.next;
                 temp.next = graveYardHead;
                 graveYardHead = temp;
+                size--;
                 return;
             }
             curr = curr.next;
